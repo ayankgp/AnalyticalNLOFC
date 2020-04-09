@@ -50,8 +50,8 @@ typedef struct ofc_parameters{
     double combGAMMA;
     double freqDEL;
     int termsNUM;
-    int* indices;
-    int* basisINDX;
+    long* indices;
+    long* basisINDX;
     double* modulations;
     double envelopeWIDTH;
     double envelopeCENTER;

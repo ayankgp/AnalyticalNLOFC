@@ -1,6 +1,6 @@
 import os
 import ctypes
-from ctypes import c_int, c_double, POINTER, Structure
+from ctypes import c_int, c_long, c_double, POINTER, Structure
 import subprocess
 
 __doc__ = """
@@ -81,8 +81,8 @@ class OFCParameters(Structure):
         ('combGAMMA', c_double),
         ('freqDEL', c_double),
         ('termsNUM', c_int),
-        ('indices', POINTER(c_int)),
-        ('basisINDX', POINTER(c_int)),
+        ('indices', POINTER(c_long)),
+        ('basisINDX', POINTER(c_long)),
         ('modulations', POINTER(c_double)),
         ('envelopeWIDTH', c_double),
         ('envelopeCENTER', c_double)

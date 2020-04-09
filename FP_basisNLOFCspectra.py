@@ -151,6 +151,8 @@ class OFC:
                                                      ofc_variables.basisNUM, ofc_variables.molNUM, self.frequency.size),
                                                     dtype=np.complex)
         self.polINDX = np.empty((ofc_variables.basisNUM, ofc_variables.basisNUM, ofc_variables.basisNUM))
+        self.basisINDX = np.empty(3, dtype=int)
+        self.indices = np.empty(3, dtype=int)
 
 
         # ------------------------------------------------------------------------------------------------------------ #
@@ -184,9 +186,9 @@ class OFC:
         ofc_parameters.combGAMMA = ofc_variables.combGAMMA
         ofc_parameters.freqDEL = ofc_variables.freqDEL
         ofc_parameters.termsNUM = ofc_variables.termsNUM
-        ofc_parameters.indices = np.ones(3).ctypes.data_as(POINTER(c_int))
-        ofc_parameters.basisINDX = np.ones(3).ctypes.data_as(POINTER(c_int))
-        ofc_parameters.modulations = np.zeros(3).ctypes.data_as(POINTER(c_double))
+        ofc_parameters.indices = self.indices.ctypes.data_as(POINTER(c_long))
+        ofc_parameters.basisINDX = self.basisINDX.ctypes.data_as(POINTER(c_long))
+        ofc_parameters.modulations = np.zeros(3, dtype=int).ctypes.data_as(POINTER(c_double))
         ofc_parameters.envelopeWIDTH = ofc_variables.envelopeWIDTH
         ofc_parameters.envelopeCENTER = ofc_variables.envelopeCENTER
         return
@@ -309,7 +311,7 @@ if __name__ == '__main__':
     MUvibr = [0.5, 0.55, 0.6]
 
     gammaPOPD = [2.418884e-8, 2.518884e-8, 2.618884e-8]
-    gammaELEC = [1.5 * 2.418884e-4, 1.7 * 2.518884e-4, 1.9 * 2.618884e-4]
+    gammaELEC = [1.5 * 2.418884e-6, 1.7 * 2.518884e-4, 1.9 * 2.618884e-4]
     gammaVIBR = [2.5e-6, 2.e-6, 3e-6]
 
     muMATRIX = [MUvibr[i] * np.ones((levelsNUM, levelsNUM), dtype=np.complex) for i in range(molNUM)]
@@ -494,7 +496,7 @@ if __name__ == '__main__':
             del system
 
         print(pol3max)
-        with open("Pickle/pol3max_vector_molecular.pickle", "wb") as pol3_file:
+        with open("Pickle/pol3max_vector_atomic.pickle", "wb") as pol3_file:
             pickle.dump(
                 {
                     "pol3max": pol3max

@@ -14,12 +14,12 @@ N = 50
 widths = np.logspace(2, -5, N)
 
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 5))
-ax.loglog(widths * 1e12, data_atm / 1e19, 'r*-')
-ax.loglog(widths * 1e12, data_mol / 1e19, 'b*-')
+ax.loglog(widths * 1e12, data_atm, 'r*-')
+ax.loglog(widths * 1e12, data_mol, 'b*-')
 ax.set_xlim(2e14, 5e6)
 render_axis(ax, labelSIZE='x-large', gridLINE='')
 ax.set_xlabel('Comb linewidth', fontsize='x-large')
-ax.axhline(1., color='k', linestyle='--', linewidth=0.8)
+# ax.axhline(1., color='k', linestyle='--', linewidth=0.8)
 ax.set_ylabel('Max[$P^{(3)} \omega$] \n (in arb. units)', fontsize='x-large')
 labels = ['0.1 PHz', '10 THz', '1 THz', '0.1 THz', '10 GHz', '1 GHz', '0.1 GHz', '10 MHz']
 ax.set_xticks([1e14, 1e13, 1e12, 1e11, 1e10, 1e9, 1e8, 1e7])
