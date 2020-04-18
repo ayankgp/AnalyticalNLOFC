@@ -198,14 +198,14 @@ class OFC:
         self.create_ofc_parameters(ofc_parameters, ofc_variables)
         molENSEMBLE = [OFCMolecule() for _ in range(ofc_variables.molNUM)]
 
-        basisRNG = int(ofc_parameters.basisNUM / 2)
-        for I_ in range(-basisRNG, basisRNG):
+        basisRNG = int((ofc_parameters.basisNUM - 1) / 2)
+        for I_ in range(-basisRNG, basisRNG+1):
             ofc_parameters.basisINDX[0] = I_
             self.polINDX[I_] = I_
-            for J_ in range(-basisRNG, basisRNG):
+            for J_ in range(-basisRNG, basisRNG+1):
                 ofc_parameters.basisINDX[1] = J_
                 self.polINDX[J_] = J_
-                for K_ in range(-basisRNG, basisRNG):
+                for K_ in range(-basisRNG, basisRNG+1):
                     ofc_parameters.basisINDX[2] = K_
                     self.polINDX[K_] = K_
                     print(I_, J_, K_)
@@ -310,10 +310,11 @@ if __name__ == '__main__':
     MU = [2., 2.1, 2.2]
     MUvibr = [0.5, 0.55, 0.6]
 
-    gammaPOPD = [2.418884e-8, 2.518884e-8, 2.618884e-8]
-    gammaELEC = [1.5 * 2.418884e-6, 1.7 * 2.518884e-4, 1.9 * 2.618884e-4]
-    gammaVIBR = [2.5e-6, 2.e-6, 3e-6]
-
+    gammaPOPD = [1e-6 * timeFACTOR, 2.518884e-8, 2.618884e-8]
+    gammaVIBR = [1e-3 * timeFACTOR, 2.e-6, 3e-6]
+    gammaELEC = [1e0 * timeFACTOR, 1.7 * 2.518884e-4, 1.9 * 2.618884e-4]
+    levels = np.asarray(levels) / 1e0
+    levelsVIBR = np.asarray(levelsVIBR) / 1e0
     muMATRIX = [MUvibr[i] * np.ones((levelsNUM, levelsNUM), dtype=np.complex) for i in range(molNUM)]
     [np.fill_diagonal(muMATRIX[i], 0j) for i in range(molNUM)]
     for i in range(molNUM):
@@ -343,25 +344,27 @@ if __name__ == '__main__':
 
     # ------------------ SPECTRA FITTING PROBABILITIES  ------------------ #
 
-    probabilities = np.asarray(
-        [
-            [0.0559383, 0.0405529, 0.0496727, 0.0502181, 0.0505829, 0.0540158, 0.0698249, 0.0561983, 0.0872398,
-             0.0899126, 0.0889188, 0.125873, 0.17377, 0.164667, 0.131627, 0.167373, 0.235067, 0.272492, 0.291075,
-             0.314825, 0.344628, 0.382892, 0.454013, 0.449995, 0.503389, 0.543675, 0.59588, 0.633565, 0.648047,
-             0.701027, 0.825524, 0.979807, 0.998223, 0.999991, 0.999955, 0.9996, 0.966293, 0.903151, 0.624991,
-             0.362229, 0.245723, 0.13213, 0.072025, 0.0118298],
-            [0.0293968, 0.0338536, 0.0383105, 0.040928, 0.0434535, 0.0481712, 0.0634281, 0.0460764, 0.079831, 0.057043,
-             0.0757835, 0.0893302, 0.10581, 0.126468, 0.148797, 0.16973, 0.189966, 0.222053, 0.261433, 0.292574,
-             0.317536, 0.355447, 0.405128, 0.456216, 0.50885, 0.559217, 0.606564, 0.660551, 0.72533, 0.802389, 0.976003,
-             0.994937, 0.997694, 0.997776, 0.989299, 0.909013, 0.800151, 0.680393, 0.495251, 0.319516, 0.233149,
-             0.147702, 0.0806267, 0.0135515],
-            [0.00679299, 0.00727662, 0.0130347, 0.0137522, 0.0143939, 0.0188319, 0.023665, 0.0301884, 0.0370206,
-             0.0362768, 0.0337105, 0.048696, 0.0690665, 0.0735955, 0.071801, 0.0826089, 0.0996923, 0.118934, 0.139534,
-             0.152036, 0.19888, 0.219307, 0.250201, 0.279543, 0.303425, 0.333486, 0.361688, 0.432412, 0.449959,
-             0.516771, 0.59716, 0.687907, 0.955484, 0.972082, 0.906222, 0.882957, 0.667665, 0.457709, 0.265371,
-             0.0926473, 0.0708056, 0.0489661, 0.0277671, 0.00653886]
-        ]
-    )
+    # probabilities = np.asarray(
+    #     [
+    #         [0.0559383, 0.0405529, 0.0496727, 0.0502181, 0.0505829, 0.0540158, 0.0698249, 0.0561983, 0.0872398,
+    #          0.0899126, 0.0889188, 0.125873, 0.17377, 0.164667, 0.131627, 0.167373, 0.235067, 0.272492, 0.291075,
+    #          0.314825, 0.344628, 0.382892, 0.454013, 0.449995, 0.503389, 0.543675, 0.59588, 0.633565, 0.648047,
+    #          0.701027, 0.825524, 0.979807, 0.998223, 0.999991, 0.999955, 0.9996, 0.966293, 0.903151, 0.624991,
+    #          0.362229, 0.245723, 0.13213, 0.072025, 0.0118298],
+    #         [0.0293968, 0.0338536, 0.0383105, 0.040928, 0.0434535, 0.0481712, 0.0634281, 0.0460764, 0.079831, 0.057043,
+    #          0.0757835, 0.0893302, 0.10581, 0.126468, 0.148797, 0.16973, 0.189966, 0.222053, 0.261433, 0.292574,
+    #          0.317536, 0.355447, 0.405128, 0.456216, 0.50885, 0.559217, 0.606564, 0.660551, 0.72533, 0.802389, 0.976003,
+    #          0.994937, 0.997694, 0.997776, 0.989299, 0.909013, 0.800151, 0.680393, 0.495251, 0.319516, 0.233149,
+    #          0.147702, 0.0806267, 0.0135515],
+    #         [0.00679299, 0.00727662, 0.0130347, 0.0137522, 0.0143939, 0.0188319, 0.023665, 0.0301884, 0.0370206,
+    #          0.0362768, 0.0337105, 0.048696, 0.0690665, 0.0735955, 0.071801, 0.0826089, 0.0996923, 0.118934, 0.139534,
+    #          0.152036, 0.19888, 0.219307, 0.250201, 0.279543, 0.303425, 0.333486, 0.361688, 0.432412, 0.449959,
+    #          0.516771, 0.59716, 0.687907, 0.955484, 0.972082, 0.906222, 0.882957, 0.667665, 0.457709, 0.265371,
+    #          0.0926473, 0.0708056, 0.0489661, 0.0277671, 0.00653886]
+    #     ]
+    # )
+
+    probabilities = np.asarray([[1.,], [1.,], [1.,]])
 
     guessLOWER = np.zeros(ensembleNUM)
     guessUPPER = np.ones(ensembleNUM)
@@ -387,9 +390,9 @@ if __name__ == '__main__':
 
     combNUM = 5000
     resolutionNUM = 3
-    omegaM1 = 3e-2 * timeFACTOR * 10
-    omegaM2 = 8e-2 * timeFACTOR * 10
-    freqDEL = 11e-2 * timeFACTOR * 10
+    omegaM1 = 0.3 * timeFACTOR * 1e0
+    omegaM2 = 0.8 * timeFACTOR * 1e0
+    freqDEL = 1.1 * timeFACTOR * 1e0
     combGAMMA = 1e-10 * timeFACTOR
     termsNUM = 5
     envelopeWIDTH = 100000
@@ -423,7 +426,7 @@ if __name__ == '__main__':
         guessUPPER=guessUPPER,
         iterMAX=1,
         combNUM=combNUM,
-        basisNUM=2,
+        basisNUM=1,
         resolutionNUM=resolutionNUM,
         omegaM1=omegaM1,
         omegaM2=omegaM2,
@@ -484,19 +487,18 @@ if __name__ == '__main__':
     # ---------------------------------------------------------------------------------------------------------------- #
 
     def linewidth_dep():
-        N = 50
-        widths = np.logspace(2, -5, N)
+        N = 30
+        widths = np.logspace(2, -8, N) * timeFACTOR
         pol3max = np.empty_like(widths)
         for i in range(N):
-            SystemVars.combGAMMA = widths[i] * timeFACTOR
-            print(i, SystemVars.combGAMMA / timeFACTOR)
+            SystemVars.combGAMMA = widths[i]
             system = OFC(SystemVars, **SystemArgs)
             system.calculate_ofc_system(SystemVars)
-            pol3max[i] = system.polarizationTOTALEMPTY_DIST.real.max()
+            pol3max[i] = np.abs(system.polarizationTOTALEMPTY_DIST).max()
+            print(i, SystemVars.combGAMMA, pol3max[i])
             del system
 
-        print(pol3max)
-        with open("Pickle/pol3max_vector_atomic.pickle", "wb") as pol3_file:
+        with open("Pickle/pol3max_vector_atomicTHz.pickle", "wb") as pol3_file:
             pickle.dump(
                 {
                     "pol3max": pol3max
@@ -504,7 +506,7 @@ if __name__ == '__main__':
                 pol3_file
             )
         plt.figure()
-        plt.loglog(widths * 1e12, pol3max, 'r*-')
+        plt.loglog(widths / timeFACTOR, pol3max, 'r*-')
         plt.xlabel('frequency (in Hz)')
         plt.ylabel('max[$P^{(3)}(\omega)$] (in arb. units)')
         plt.show()

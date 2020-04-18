@@ -4,31 +4,40 @@ import matplotlib.pyplot as plt
 from functions import render_axis
 
 timeFACTOR = 2.418884e-5
+with open("Pickle/pol3max_vector_atomicMHz.pickle", "rb") as f:
+    data_atmMHz = pickle.load(f)['pol3max']
 
-with open("Pickle/pol3max_vector_atomic.pickle", "rb") as f:
-    data_atm = pickle.load(f)['pol3max']
-with open("Pickle/pol3max_vector_molecular.pickle", "rb") as f:
-    data_mol = pickle.load(f)['pol3max']
+with open("Pickle/pol3max_vector_atomicGHz.pickle", "rb") as f:
+    data_atmGHz = pickle.load(f)['pol3max']
 
-N = 50
-widths = np.logspace(2, -5, N)
+with open("Pickle/pol3max_vector_atomicTHz.pickle", "rb") as f:
+    data_atmTHz = pickle.load(f)['pol3max']
+
+with open("Pickle/pol3max_vector_atomicPHz.pickle", "rb") as f:
+    data_atmPHZ = pickle.load(f)['pol3max']
+
+N = 30
+widths = np.logspace(2, -8, N) * timeFACTOR
 
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 5))
-ax.loglog(widths * 1e12, data_atm, 'r*-')
-ax.loglog(widths * 1e12, data_mol, 'b*-')
-ax.set_xlim(2e14, 5e6)
+ax.loglog(widths / timeFACTOR, data_atmPHZ, 'b*-', label='PHz')
+ax.loglog(widths / timeFACTOR, data_atmTHz, 'k*-', label='THz')
+ax.loglog(widths / timeFACTOR, data_atmGHz, 'm*-', label='GHz')
+ax.loglog(widths / timeFACTOR, data_atmMHz, 'r*-', label='MHz')
+ax.set_xlim(1e3, 1e-9)
 render_axis(ax, labelSIZE='x-large', gridLINE='')
 ax.set_xlabel('Comb linewidth', fontsize='x-large')
 # ax.axhline(1., color='k', linestyle='--', linewidth=0.8)
 ax.set_ylabel('Max[$P^{(3)} \omega$] \n (in arb. units)', fontsize='x-large')
-labels = ['0.1 PHz', '10 THz', '1 THz', '0.1 THz', '10 GHz', '1 GHz', '0.1 GHz', '10 MHz']
-ax.set_xticks([1e14, 1e13, 1e12, 1e11, 1e10, 1e9, 1e8, 1e7])
-ax.set_xticklabels(labels)
+# labels = ['0.1 PHz', '10 THz', '1 THz', '0.1 THz', '10 GHz', '1 GHz', '0.1 GHz', '10 MHz']
+# ax.set_xticks(widths)
+# ax.set_xticklabels(labels)
 for tick in ax.get_xticklabels():
     tick.set_rotation(45)
 for tick in ax.get_yticklabels():
     tick.set_rotation(45)
 fig.subplots_adjust(left=0.15, bottom=0.2)
+ax.legend()
 
 with open("Pickle/pol3M1M2_vector.pickle", "rb") as f:
     dataM1M2 = pickle.load(f)['pol3max']
